@@ -1,5 +1,5 @@
 web: gunicorn gettingstarted.wsgi
-web: gunicorn dash_app:server --preload
+web: gunicorn app_start:dash_app --preload
 
 
 

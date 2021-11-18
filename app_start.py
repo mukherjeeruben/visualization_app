@@ -5,7 +5,7 @@ from plots.control_set import output_set
 import config
 
 dash_app = dash.Dash(__name__)
-server = dash_app.server
+# server = dash_app.server
 dash_app.layout = set_page_base()
 
 
