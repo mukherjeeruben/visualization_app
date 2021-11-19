@@ -4,3 +4,4 @@ dash_html_components==2.0.0
 dash_core_components==2.0.0
 dash==2.0.0
 plotly==5.4.0
+sodapy
