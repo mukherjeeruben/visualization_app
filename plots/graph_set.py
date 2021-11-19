@@ -1,5 +1,9 @@
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
+
+from urllib.request import urlopen
+import json
 
 
 def line_fig():
@@ -10,4 +14,20 @@ def line_fig():
     })
 
     fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
+    return fig
+
+
+def world_map_fig():
+    with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
+        counties = json.load(response)
+
+    df = pd.read_csv("https://raw.githubusercontent.com/plotly/datasets/master/fips-unemp-16.csv",
+                     dtype={"fips": str})
+    fig = go.Figure(go.Choroplethmapbox(geojson=counties, locations=df.fips, z=df.unemp,
+                                        colorscale="Viridis", zmin=0, zmax=12,
+                                        marker_opacity=0.5, marker_line_width=0))
+    fig.update_layout(mapbox_style="carto-positron",
+                      mapbox_zoom=3, mapbox_center={"lat": 37.0902, "lon": -95.7129})
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+
     return fig
