@@ -1,6 +1,6 @@
 debug = False  # Push False on Server
 
-query_year = {'2019': 'u6nh-b56h',
+query_year = {'2019': '2upf-qytp',
               '2020': 'kxp8-n2sj'}
 
-chunk_set = 100000
+chunk_set = 1000000
