@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 
 from urllib.request import urlopen
 import json
-from data_access_layer.gdp_data_dal import get_taxi_data
+from data_access_layer.process_dal import get_taxi_data
 
 def line_fig():
     # df = pd.DataFrame({
