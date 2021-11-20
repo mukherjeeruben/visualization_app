@@ -13,7 +13,7 @@ def line_fig():
     #     "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
     # })
     df = get_taxi_data()
-    fig = px.bar(df, x="LocationID", y="LocationID", color="LocationID")
+    fig = px.bar(df, x="PickupLocation", y="RideCount", color="PickupLocation", text="RideCount")
     return fig
 
 

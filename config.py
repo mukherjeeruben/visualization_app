@@ -9,10 +9,10 @@ query_year = [{'year': 2017, 'keyval': 'biws-g3hs'},
 
 chunk_set = 6525000  ## for 2020
 
-payment_mode = '''[{"id" : 1, "val": "Credit card"},
-                {"id" : 2, "val": "Cash"},
-                {"id" : 3, "val": "No charge"},
-                {"id" : 4, "val": "Dispute"},
-                {"id" : 5, "val": "Unknown"},
-                {"id" : 6, "val": "Voided trip"}] '''
+payment_mode = '''[{"payment_type" : 1, "PaymentTypeName": "Credit card"},
+                {"payment_type" : 2, "PaymentTypeName": "Cash"},
+                {"payment_type" : 3, "PaymentTypeName": "No charge"},
+                {"payment_type" : 4, "PaymentTypeName": "Dispute"},
+                {"payment_type" : 5, "PaymentTypeName": "Unknown"},
+                {"payment_type" : 6, "PaymentTypeName": "Voided trip"}] '''
 
