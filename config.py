@@ -2,10 +2,12 @@ debug = False  # Push False on Server
 base_url='''https://data.cityofnewyork.us'''
 location_master_data = '''https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv'''
 
-query_year = [{'year': 2019, 'keyval': '2upf-qytp'},
+query_year = [{'year': 2017, 'keyval': 'biws-g3hs'},
+              {'year': 2018, 'keyval': 't29m-gskq'},
+              {'year': 2019, 'keyval': '2upf-qytp'},
               {'year': 2020, 'keyval': 'kxp8-n2sj'}]
 
-chunk_set = 6525000
+chunk_set = 6525000  ## for 2020
 
 payment_mode = '''[{"id" : 1, "val": "Credit card"},
                 {"id" : 2, "val": "Cash"},
