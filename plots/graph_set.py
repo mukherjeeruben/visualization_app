@@ -4,16 +4,16 @@ import plotly.graph_objects as go
 
 from urllib.request import urlopen
 import json
-
+from data_access_layer.gdp_data_dal import get_taxi_data
 
 def line_fig():
-    df = pd.DataFrame({
-        "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
-        "Amount": [4, 1, 2, 2, 4, 5],
-        "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
-    })
-
-    fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
+    # df = pd.DataFrame({
+    #     "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
+    #     "Amount": [4, 1, 2, 2, 4, 5],
+    #     "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
+    # })
+    df = get_taxi_data()
+    fig = px.bar(df, x="LocationID", y="LocationID", color="LocationID")
     return fig
 
 
