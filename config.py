@@ -7,3 +7,10 @@ query_year = [{'year': 2019, 'keyval': '2upf-qytp'},
 
 chunk_set = 6525000
 
+payment_mode = '''[{"id" : 1, "val": "Credit card"},
+                {"id" : 2, "val": "Cash"},
+                {"id" : 3, "val": "No charge"},
+                {"id" : 4, "val": "Dispute"},
+                {"id" : 5, "val": "Unknown"},
+                {"id" : 6, "val": "Voided trip"}] '''
+
