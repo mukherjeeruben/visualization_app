@@ -10,7 +10,8 @@ def get_paytype_master_data():
 
 def get_location_master_data():
     data = pd.read_csv(config.location_master_data)
-    data = data.drop(columns=["Zone", "service_zone"])
+    # data = data.drop(columns=["Zone", "service_zone"])
+    data = data.drop(columns=["service_zone"])
     return data
 
 

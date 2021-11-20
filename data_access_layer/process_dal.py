@@ -13,6 +13,12 @@ def get_taxi_data():
         ##Type Casting
         data_2020['pulocationid']=data_2020['pulocationid'].astype(int)
         data_2020['total_amount'] = data_2020['total_amount'].astype(float)
+        data_2020['payment_type'] = data_2020['payment_type'].astype(int)
+
+        ## Get Payment Type Data
+        payment_masterdata = get_paytype_master_data()
+        payment_masterdata = payment_masterdata.convert_dtypes()
+        payment_masterdata['payment_type'] = payment_masterdata['payment_type'].astype(int)
 
         ## Get Location Data
         location_masterdata = get_location_master_data()
@@ -20,20 +26,31 @@ def get_taxi_data():
 
         ## Rename Column
         data_2020.rename(columns={'pulocationid': 'LocationID'}, inplace=True)
-        location_masterdata.rename(columns={'Borough': 'PickupLocation'}, inplace=True)
+        location_masterdata.rename(columns={'Zone': 'PickupLocation'}, inplace=True)
+
 
         ## Merge Data
-        merged_df = data_2020.merge(location_masterdata, how='left', on='LocationID')
+        merged_location_df = data_2020.merge(location_masterdata, how='left', on='LocationID')
+        merged_df = merged_location_df.merge(payment_masterdata, how='left', on='payment_type')
 
         ##Clean Data for null values
         merged_df.isna()
         merged_df.dropna()
-
+        
         #Group by source location
-        result_df = merged_df.groupby('PickupLocation')
+        result_df = merged_df.groupby('PickupLocation',as_index=False).count().nlargest(10,['LocationID'])
+        result_df.rename(columns={'LocationID': 'RideCount'}, inplace=True)
+
+        result_df=result_df.drop(columns=['tpep_pickup_datetime', 'payment_type', 'total_amount'])
+
         return result_df
+
     except Exception as msf:
         print(str(msf))
+
+
+
+
 
 
 
