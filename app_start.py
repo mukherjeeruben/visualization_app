@@ -15,5 +15,7 @@ def render_graph(selected_year, selected_count):
     return fig
 
 
+dash_app.title = 'Visualization App'
+
 if __name__ == '__main__':
     dash_app.run_server(debug=config.debug)
