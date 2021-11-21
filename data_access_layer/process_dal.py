@@ -3,12 +3,12 @@ from data_access_layer.url_source_data import get_url_query_data, get_location_m
 import config
 
 
-def get_taxi_data(year, chunk_count, city_count):
+def get_taxi_data(year, chunk_count, city_count, selected_vendor):
     try:
         data_2020 = get_url_query_data(base_url=config.base_url,
                                        year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
                                        columns='tpep_pickup_datetime,pulocationid,payment_type,total_amount',
-                                       condition_set='total_amount>10&vendorid=1', limit=[x['keyval'] for x in config.chunk_set if x['chunk'] == chunk_count][0])
+                                       condition_set='total_amount>10&vendorid='+str(selected_vendor), limit=[x['keyval'] for x in config.chunk_set if x['chunk'] == chunk_count][0])
 
         ##Type Casting
         data_2020['pulocationid']=data_2020['pulocationid'].astype(int)
