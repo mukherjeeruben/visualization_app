@@ -23,11 +23,10 @@ def get_taxi_data(year, chunk_count):
         ## Get Location Data
         location_masterdata = get_location_master_data()
         location_masterdata = location_masterdata.convert_dtypes()
+        location_masterdata['SourceLocation'] = location_masterdata['Zone'].map(str) + '(' + location_masterdata['Borough'].map(str) + ')'
 
         ## Rename Column
         data_2020.rename(columns={'pulocationid': 'LocationID'}, inplace=True)
-        location_masterdata.rename(columns={'Zone': 'PickupLocation'}, inplace=True)
-
 
         ## Merge Data
         merged_location_df = data_2020.merge(location_masterdata, how='left', on='LocationID')
@@ -38,12 +37,16 @@ def get_taxi_data(year, chunk_count):
         merged_df.dropna()
         
         #Group by source location and payment type
-        result_df = merged_df.groupby(['PickupLocation', 'PaymentTypeName'], as_index=False).agg({'payment_type': 'sum'})
+        result_df = merged_df.groupby(['SourceLocation', 'PaymentTypeName'], as_index=False).agg({'payment_type': 'sum'})
         result_df = result_df.convert_dtypes()
+        print(result_df)
+
+        ##Clean Data
+        result_df = result_df[result_df['SourceLocation'] != '<NA>(Unknown)']
 
         ## Rename Column
         result_df.rename(columns={'payment_type': 'Payment Type Count'}, inplace=True)
-        result_df.rename(columns={'PickupLocation': 'Pickup Location'}, inplace=True)
+        result_df.rename(columns={'SourceLocation': 'Pickup Location'}, inplace=True)
         result_df.rename(columns={'PaymentTypeName': 'Payment Type'}, inplace=True)
 
         return result_df
