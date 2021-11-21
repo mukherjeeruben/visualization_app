@@ -2,11 +2,11 @@ import plotly.express as px
 from data_access_layer.process_dal import get_taxi_data
 
 
-def bar_fig(year, chunk_count, selected_city_count):
+def bar_fig(year, chunk_count, selected_city_count, selected_vendor):
     if year is None:
         fig = px.bar()
     else:
-        df = get_taxi_data(year, chunk_count, selected_city_count)
+        df = get_taxi_data(year, chunk_count, selected_city_count, selected_vendor)
         fig = px.bar(df, x="Payment Type Count",
                          y="Pickup Location",
                          color="Payment Type",
