@@ -11,6 +11,8 @@ query_year = [{'year': 2017, 'keyval': 'biws-g3hs'},
 chunk_set =[{'chunk': 'Less than 1000', 'keyval': 10000},
             {'chunk': 'Less than 100000', 'keyval': 100000},
             {'chunk': 'Less than 1000000', 'keyval': 1000000},
+            {'chunk': 'Less than 2500000', 'keyval': 2500000},
+            {'chunk': 'Less than 5000000', 'keyval': 5000000},
             {'chunk': 'Maximum', 'keyval': 6525000}]
 
 payment_mode = '''[{"payment_type" : 1, "PaymentTypeName": "Credit card"},
