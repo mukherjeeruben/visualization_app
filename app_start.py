@@ -9,9 +9,9 @@ server = dash_app.server
 dash_app.layout = set_page_base()
 
 
-@dash_app.callback(Output('bar_graph_1', component_property='figure'), Input('dropdown1', 'value'), Input('dropdown2', 'value'))
-def render_graph(selected_year, selected_count):
-    fig = bar_fig(selected_year, selected_count)
+@dash_app.callback(Output('bar_graph_1', component_property='figure'), Input('dropdown1', 'value'), Input('dropdown2', 'value'), Input('dropdown3', 'value'))
+def render_graph(selected_year, selected_count, selected_city_count):
+    fig = bar_fig(selected_year, selected_count, selected_city_count)
     return fig
 
 

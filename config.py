@@ -24,3 +24,8 @@ payment_mode = '''[{"payment_type" : 1, "PaymentTypeName": "Credit card"},
                 {"payment_type" : 5, "PaymentTypeName": "Unknown"},
                 {"payment_type" : 6, "PaymentTypeName": "Voided trip"}] '''
 
+city_count = [{'chunk': '10', 'keyval': 10},
+            {'chunk': '25', 'keyval': 25},
+            {'chunk': '50', 'keyval': 50},
+            {'chunk': 'All', 'keyval': 'All'}]
+

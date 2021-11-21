@@ -3,7 +3,7 @@ from data_access_layer.url_source_data import get_url_query_data, get_location_m
 import config
 
 
-def get_taxi_data(year, chunk_count):
+def get_taxi_data(year, chunk_count, city_count):
     try:
         data_2020 = get_url_query_data(base_url=config.base_url,
                                        year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
@@ -35,14 +35,24 @@ def get_taxi_data(year, chunk_count):
         ##Clean Data for null values
         merged_df.isna()
         merged_df.dropna()
-        
+
+        ## Get top count records
+
+        set_count = [x['keyval'] for x in config.city_count if x['chunk'] == city_count][0]
+        if set_count != 'All':
+            type_merged_df = merged_df.convert_dtypes()
+            top_location_df = type_merged_df.groupby('SourceLocation', as_index=False).size().nlargest(set_count,'size')
+            top_location_df = top_location_df.convert_dtypes()
+            toplocation_list = [str(location) for location in top_location_df['SourceLocation']]
+
         #Group by source location and payment type
         result_df = merged_df.groupby(['SourceLocation', 'PaymentTypeName'], as_index=False).agg({'payment_type': 'sum'})
         result_df = result_df.convert_dtypes()
-        print(result_df)
 
         ##Clean Data
         result_df = result_df[result_df['SourceLocation'] != '<NA>(Unknown)']
+        if set_count != 'All':
+            result_df = result_df[result_df['SourceLocation'].isin(toplocation_list)]
 
         ## Rename Column
         result_df.rename(columns={'payment_type': 'Payment Type Count'}, inplace=True)
