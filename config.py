@@ -29,3 +29,6 @@ city_count = [{'chunk': '10', 'keyval': 10},
             {'chunk': '50', 'keyval': 50},
             {'chunk': 'All', 'keyval': 'All'}]
 
+Vendors_dataset = '''[{"VendorID" : 1, "VendorName": "Creative Mobile Technologies"},
+                {"VendorID" : 2, "VendorName": "VeriFone Inc"}] '''
+
