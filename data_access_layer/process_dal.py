@@ -37,11 +37,14 @@ def get_taxi_data(year, chunk_count):
         merged_df.isna()
         merged_df.dropna()
         
-        #Group by source location
-        result_df = merged_df.groupby('PickupLocation',as_index=False).count().nlargest(10,['LocationID'])
-        result_df.rename(columns={'LocationID': 'RideCount'}, inplace=True)
+        #Group by source location and payment type
+        result_df = merged_df.groupby(['PickupLocation', 'PaymentTypeName'], as_index=False).agg({'payment_type': 'sum'})
+        result_df = result_df.convert_dtypes()
 
-        result_df=result_df.drop(columns=['tpep_pickup_datetime', 'payment_type', 'total_amount'])
+        ## Rename Column
+        result_df.rename(columns={'payment_type': 'Payment Type Count'}, inplace=True)
+        result_df.rename(columns={'PickupLocation': 'Pickup Location'}, inplace=True)
+        result_df.rename(columns={'PaymentTypeName': 'Payment Type'}, inplace=True)
 
         return result_df
 
