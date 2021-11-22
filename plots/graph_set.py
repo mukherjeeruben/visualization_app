@@ -41,10 +41,10 @@ def fig_graph_b(year, chunk_count, selected_city_count, selected_vendor):
         fig = px.line()
     else:
         df = get_year_revenue_data(year)
-        df = px.data.gapminder().query("continent=='Oceania'")
+        # df = px.data.gapminder().query("continent=='Oceania'")
         # print(df.info())
         # print(df)
-        fig = px.line(df, x="year", y="lifeExp", color='country')
+        fig = px.line(df, x="Day", y="vendorid", color='vendorname')
     return fig
 
 

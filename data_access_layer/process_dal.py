@@ -65,17 +65,25 @@ def get_taxi_data(year, chunk_count, city_count, selected_vendor):
         print(str(msf))
 
 
-def get_year_revenue_data(year=2020):
+def get_year_revenue_data(year):
     try:
         raw_data = get_url_query_data(base_url=config.base_url,
                                        year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
                                        columns='vendorid,tpep_pickup_datetime',
-                                       condition_set='''tpep_pickup_datetime between '2020-01-01' and '2020-01-31T09:27:32.000'&vendorid=1 or vendorid=2''', limit=100)
+                                       condition_set='''vendorid=1 or vendorid=2''',
+                                       #condition_set='''tpep_pickup_datetime between '2020-01-01' and '2020-01-31T09:27:32.000'&vendorid=1 or vendorid=2''',
+                                       limit=5000000)
 
-        ##Type Casting
+        ##Type Casting and Cleanng
+        raw_data = raw_data.convert_dtypes()
         raw_data['vendorid'] = raw_data['vendorid'].astype(int)
-        raw_data['tpep_pickup_datetime'] = pd.to_datetime(raw_data['tpep_pickup_datetime'])
-        raw_data['tpep_pickup_datetime'] = raw_data['tpep_pickup_datetime'].dt.date
+        date_set = raw_data['tpep_pickup_datetime'].str.split('T', expand=True)
+        raw_data = pd.merge(raw_data, date_set, left_index=True, right_index=True)
+        raw_data = raw_data.drop(['tpep_pickup_datetime', 1], axis=1)
+        raw_data.rename(columns={0: 'Date'}, inplace=True)
+        raw_data['Date'] = pd.to_datetime(raw_data['Date'], format='%Y-%m-%d')
+        raw_data['Day'] = pd.DatetimeIndex(raw_data['Date']).day
+        print(raw_data.info())
 
         ## Get Vendor Master Data
         vendor_masterdata = get_vendor_master_data()
@@ -85,12 +93,10 @@ def get_year_revenue_data(year=2020):
         ## Merge Data
         merged_location_df = raw_data.merge(vendor_masterdata, how='left', on='vendorid')
 
-        # Group by source location and payment type
-        result_df = merged_location_df.groupby(['vendorname'], as_index=False).agg({'tpep_pickup_datetime': 'sum'})
-        # TODO PENDING
+        # Group by vendor name and date
+        result_df = merged_location_df.groupby(['vendorname', 'Day'], as_index=False).agg({'vendorid': 'sum'})
         print(result_df)
-
-
+        return result_df
 
     except Exception as msf:
         print(str(msf))
@@ -110,12 +116,13 @@ def get_vendor_revenue_data(year, chunk_count):
         # Get vendor data
         vendor_masterdata = get_vendor_master_data()
         vendor_masterdata = vendor_masterdata.convert_dtypes()
-        vendor_masterdata.info()
+
         ## Merge Data
         merged_vendor_df = raw_data.merge(vendor_masterdata, how='left', on='vendorid')
         merged_vendor_df.convert_dtypes()
         merged_vendor_df['vendorname'] = merged_vendor_df['vendorname'].astype(str)
         merged_vendor_df = merged_vendor_df[merged_vendor_df['vendorname'] != '<NA>']
+
         ## Groupby vendorid
         new_vendor_df = merged_vendor_df.groupby(['vendorname'], as_index=False).aggregate({'total_amount': 'sum', 'tip_amount': 'sum'})
 
