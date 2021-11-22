@@ -71,6 +71,7 @@ def get_taxi_data(year, chunk_count, city_count, selected_vendor):
 
 
 def get_year_revenue_data(month, year):
+    code_init()
     try:
         date_range = None
         for range_val in config.date_rangeset:
@@ -91,7 +92,6 @@ def get_year_revenue_data(month, year):
         raw_data.rename(columns={0: 'Date'}, inplace=True)
         raw_data['Date'] = pd.to_datetime(raw_data['Date'], format='%Y-%m-%d')
         raw_data['Day'] = pd.DatetimeIndex(raw_data['Date']).day
-        print(raw_data.info())
 
         ## Get Vendor Master Data
         vendor_masterdata = get_vendor_master_data()
@@ -104,6 +104,7 @@ def get_year_revenue_data(month, year):
 
         # Group by vendor name and date
         result_df = merged_location_df.groupby(['vendorname', 'Day'], as_index=False).agg({'vendorid': 'sum'})
+        execution_end()
         return result_df
 
     except Exception as msf:
@@ -112,6 +113,7 @@ def get_year_revenue_data(month, year):
 
 def get_vendor_revenue_data(year, chunk_count):
     try:
+        code_init()
         raw_data = get_url_query_data(base_url=config.base_url,
                                   year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
                                   columns='vendorid,total_amount,tip_amount',
@@ -134,6 +136,7 @@ def get_vendor_revenue_data(year, chunk_count):
         ## Groupby vendorid
         new_vendor_df = merged_vendor_df.groupby(['vendorname'], as_index=False).aggregate({'total_amount': 'sum', 'tip_amount': 'sum'})
 
+        execution_end()
         return new_vendor_df
 
     except Exception as msf:
