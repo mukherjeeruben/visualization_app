@@ -1,5 +1,5 @@
 from dash import html, dcc
-from plots.control_set import set_control
+from plots.control_set import set_control_a, set_control_b, set_control_c
 
 
 def set_page_base():
@@ -18,11 +18,17 @@ def set_page_base():
                  )
                 ])
 
-    ### Add Controls to page base
-    page_base.children.append(set_control())
+    ### Add Controls to page base and Create Graph objects for A
+    page_base.children.append(set_control_a())
+    page_base.children.append(html.Div(dcc.Graph(id='graph_a')))
 
-    ### Create Graph objects
-    page_base.children.append(html.Div(dcc.Graph(id='bar_graph_1')))
+    ### Add Controls to page base and Create Graph objects for B
+    page_base.children.append(set_control_b())
+    page_base.children.append(html.Div(dcc.Graph(id='graph_b')))
+
+    ### Add Controls to page base and Create Graph objects for C
+    page_base.children.append(set_control_c())
+    page_base.children.append(html.Div(dcc.Graph(id='graph_c')))
 
     return page_base
 

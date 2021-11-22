@@ -22,13 +22,11 @@ def get_url_query_data(base_url, year_key, columns, condition_set, limit):
     return df
 
 
-
-
-
-
-
-
-
+def get_vendor_master_data():
+    vendors_dataset = '''[{"vendorid": 1, "vendorname": "Creative Mobile Technologies"},
+                       {"vendorid": 2, "vendorname": "VeriFone Inc"}]'''
+    data = pd.read_json(vendors_dataset)
+    return data
 
 
 
