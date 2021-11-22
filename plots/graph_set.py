@@ -44,7 +44,7 @@ def fig_graph_b(month, year):
         # df = px.data.gapminder().query("continent=='Oceania'")
         # print(df.info())
         # print(df)
-        fig = px.line(df, x="Day", y="vendorid", color='vendorname')
+        fig = px.line(df, x="Day", y="vendorid", color='vendorname', markers=True)
     return fig
 
 
