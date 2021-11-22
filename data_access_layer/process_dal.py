@@ -115,7 +115,7 @@ def get_vendor_revenue_data(year, chunk_count):
         merged_vendor_df = raw_data.merge(vendor_masterdata, how='left', on='vendorid')
         merged_vendor_df.convert_dtypes()
         merged_vendor_df['vendorname'] = merged_vendor_df['vendorname'].astype(str)
-
+        merged_vendor_df = merged_vendor_df[merged_vendor_df['vendorname'] != '<NA>']
         ## Groupby vendorid
         new_vendor_df = merged_vendor_df.groupby(['vendorname'], as_index=False).aggregate({'total_amount': 'sum', 'tip_amount': 'sum'})
 
