@@ -15,9 +15,9 @@ def render_graph_a(selected_year, selected_count, selected_city_count, selected_
     return fig
 
 
-@dash_app.callback(Output('graph_b', component_property='figure'), Input('dropdown10', 'value'),Input('dropdown11', 'value'),Input('dropdown12', 'value'),Input('dropdown13', 'value'))
-def render_graph_b(selected_count, selected_city_count, selected_vendor, selected_year):
-    fig = fig_graph_b(selected_year, selected_count, selected_city_count, selected_vendor)
+@dash_app.callback(Output('graph_b', component_property='figure'), Input('dropdown12', 'value'), Input('dropdown13', 'value'))
+def render_graph_b(selected_month, selected_year):
+    fig = fig_graph_b(selected_month, selected_year)
     return fig
 
 

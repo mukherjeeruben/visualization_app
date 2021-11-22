@@ -1,14 +1,18 @@
 import pandas as pd
 from data_access_layer.url_source_data import get_url_query_data, get_location_master_data, get_paytype_master_data, get_vendor_master_data
 import config
+import numpy as np
+from time_log import code_init, execution_end
 
 
 def get_taxi_data(year, chunk_count, city_count, selected_vendor):
+    code_init()
     try:
         raw_data = get_url_query_data(base_url=config.base_url,
                                        year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
                                        columns='tpep_pickup_datetime,pulocationid,payment_type,total_amount',
-                                       condition_set='total_amount>10&vendorid='+str(selected_vendor), limit=[x['keyval'] for x in config.chunk_set if x['chunk'] == chunk_count][0])
+                                       condition_set='total_amount>10&vendorid='+str(selected_vendor),
+                                       limit=[x['keyval'] for x in config.chunk_set if x['chunk'] == chunk_count][0])
 
         ##Type Casting
         raw_data['pulocationid']=raw_data['pulocationid'].astype(int)
@@ -59,24 +63,28 @@ def get_taxi_data(year, chunk_count, city_count, selected_vendor):
         result_df.rename(columns={'SourceLocation': 'Pickup Location'}, inplace=True)
         result_df.rename(columns={'PaymentTypeName': 'Payment Type'}, inplace=True)
 
+        execution_end()
         return result_df
 
     except Exception as msf:
         print(str(msf))
 
 
-def get_year_revenue_data(year):
+def get_year_revenue_data(month, year):
     try:
+        date_range = None
+        for range_val in config.date_rangeset:
+            if month == range_val['month']:
+                date_range = '\''+str(year)+range_val['startdate']+'\''+' and '+'\''+str(year)+range_val['enddate']+'\''
         raw_data = get_url_query_data(base_url=config.base_url,
                                        year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
                                        columns='vendorid,tpep_pickup_datetime',
-                                       condition_set='''vendorid=1 or vendorid=2''',
-                                       #condition_set='''tpep_pickup_datetime between '2020-01-01' and '2020-01-31T09:27:32.000'&vendorid=1 or vendorid=2''',
-                                       limit=5000000)
+                                       condition_set='tpep_pickup_datetime between '+ date_range,
+                                       limit=config.line_graph_chunk)
+
 
         ##Type Casting and Cleanng
-        raw_data = raw_data.convert_dtypes()
-        raw_data['vendorid'] = raw_data['vendorid'].astype(int)
+        raw_data['vendorid'] = pd.to_numeric(raw_data['vendorid'], errors='coerce').fillna(0).astype(np.int64)
         date_set = raw_data['tpep_pickup_datetime'].str.split('T', expand=True)
         raw_data = pd.merge(raw_data, date_set, left_index=True, right_index=True)
         raw_data = raw_data.drop(['tpep_pickup_datetime', 1], axis=1)
@@ -87,15 +95,15 @@ def get_year_revenue_data(year):
 
         ## Get Vendor Master Data
         vendor_masterdata = get_vendor_master_data()
-        vendor_masterdata['vendorid'] = vendor_masterdata['vendorid'].astype(int)
         vendor_masterdata = vendor_masterdata.convert_dtypes()
+
 
         ## Merge Data
         merged_location_df = raw_data.merge(vendor_masterdata, how='left', on='vendorid')
 
+
         # Group by vendor name and date
         result_df = merged_location_df.groupby(['vendorname', 'Day'], as_index=False).agg({'vendorid': 'sum'})
-        print(result_df)
         return result_df
 
     except Exception as msf:

@@ -36,11 +36,11 @@ def fig_graph_a(year, chunk_count, selected_city_count, selected_vendor):
     return fig
 
 
-def fig_graph_b(year, chunk_count, selected_city_count, selected_vendor):
+def fig_graph_b(month, year):
     if year is None:
         fig = px.line()
     else:
-        df = get_year_revenue_data(year)
+        df = get_year_revenue_data(month, year)
         # df = px.data.gapminder().query("continent=='Oceania'")
         # print(df.info())
         # print(df)
