@@ -12,7 +12,8 @@ def fig_graph_a(year, chunk_count, selected_city_count, selected_vendor):
                          color="Payment Type",
                          text="Payment Type Count",
                          orientation='h',
-                         barmode='stack')
+                         barmode='stack',
+                         title='Top N Popular pickup Locations')
         fig.update_layout(
             title='Payment Type in yellow taxi',
             yaxis=dict(
@@ -44,7 +45,7 @@ def fig_graph_b(month, year):
         # df = px.data.gapminder().query("continent=='Oceania'")
         # print(df.info())
         # print(df)
-        fig = px.line(df, x="Day", y="vendorid", color='vendorname', markers=True)
+        fig = px.line(df, x="Day", y="vendorid", color='vendorname', markers=True, title='Profits by vendor for year ')
     return fig
 
 
@@ -54,7 +55,7 @@ def fig_graph_c(year, chunk_count):
     else:
         df = get_vendor_revenue_data(year, chunk_count)
         fig = px.scatter(df, x="total_amount", y="vendorname",
-                         size="tip_amount", color="vendorname", hover_name="tip_amount", log_x=True, size_max=60)
+                         size="tip_amount", color="vendorname", hover_name="tip_amount", log_x=True, size_max=60,title='total profits fetched by vendor for Yello Taxi inc')
     return fig
 
 
