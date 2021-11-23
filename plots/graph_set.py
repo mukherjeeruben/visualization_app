@@ -1,38 +1,79 @@
 import plotly.express as px
-from data_access_layer.process_dal import get_taxi_data, get_year_revenue_data, get_vendor_revenue_data
+from data_access_layer.process_dal import get_payment_type_data, get_year_revenue_data, get_vendor_revenue_data
+import config
 
 
-def fig_graph_a(year, chunk_count, selected_city_count, selected_vendor):
+def fig_graph_a(year, month, selected_city_count, selected_vendor):
     if year is None:
         fig = px.bar()
     else:
-        df = get_taxi_data(year, chunk_count, selected_city_count, selected_vendor)
+        df = get_payment_type_data(year, month, selected_city_count, selected_vendor)
         fig = px.bar(df, x="Total Rides",
                          y="Pickup Location",
-                         color="Payment Type",
-                         text="Payment Type Count",
+                         color="Payment Mode Type",
+                         text="Total Rides",
                          orientation='h',
-                         barmode='stack')
+                         barmode='stack',
+                         height=int(20*int(selected_city_count)+200))
         fig.update_layout(
-            title='Payment Type in yellow taxi',
             yaxis=dict(
                 showgrid=False,
                 showline=False,
                 showticklabels=True,
                 domain=[0, 1],
+                titlefont=dict(
+                    family='Arial',
+                    size=12,
+                    color='rgb(82, 82, 82)',
+                ),
+                tickfont=dict(
+                    family='Arial',
+                    size=12,
+                    color='rgb(82, 82, 82)',
+                )
             ),
             xaxis=dict(
                 zeroline=False,
                 showline=False,
                 showticklabels=True,
-                showgrid=True,
-                domain=[0, 0.42],
+                showgrid=False,
+                titlefont=dict(
+                    family='Arial',
+                    size=12,
+                    color='rgb(82, 82, 82)',
+                ),
+                tickfont=dict(
+                    family='Arial',
+                    size=12,
+                    color='rgb(82, 82, 82)',
+                )
             ),
-            legend=dict(x=1.038, y=1.038, font_size=10),
-            margin=dict(l=100, r=20, t=70, b=70),
-            paper_bgcolor='rgb(248, 248, 255)',
-            plot_bgcolor='rgb(248, 248, 255)',
+            legend=dict(x=1.038, y=1.038, font_size=12),
+            margin=dict(l=100, r=20, t=60, b=70),
+            paper_bgcolor='white',
+            plot_bgcolor='white',
         )
+        annotations = []
+        # Title
+        annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
+                                xanchor='left', yanchor='bottom',
+                                text='Payment mode count of cab vendor : '+str([x['VendorName'] for x in config.Vendors_dataset][0]) +' ('+str(month)+', '+str(year)+')',
+                                font=dict(family='Arial',
+                                          size=24,
+                                          color='rgb(82, 82, 82)'),
+                                showarrow=False))
+
+        # Source
+        annotations.append(dict(xref='paper', yref='paper', x=0.5, y=-0.2,
+                                xanchor='center', yanchor='top',
+                                text='Source: NYC Taxi & Limousine Commission ' +
+                                     'Storytelling with data',
+                                font=dict(family='Arial',
+                                          size=12,
+                                          color='rgb(150,150,150)'),
+                                showarrow=False))
+
+        fig.update_layout(annotations=annotations)
     return fig
 
 
@@ -111,9 +152,9 @@ def fig_graph_b(month, year):
         # Title
         annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
                                 xanchor='left', yanchor='bottom',
-                                text='New York : Yellow Taxi ride data per day',
+                                text='New York : Yellow Taxi ride data per day for ' +'('+str(month)+', '+str(year)+')',
                                 font=dict(family='Arial',
-                                          size=30,
+                                          size=24,
                                           color='rgb(82, 82, 82)'),
                                 showarrow=False))
 

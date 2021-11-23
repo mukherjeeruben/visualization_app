@@ -10,8 +10,8 @@ dash_app.layout = set_page_base()
 
 
 @dash_app.callback(Output('graph_a', component_property='figure'), Input('dropdown1', 'value'), Input('dropdown2', 'value'), Input('dropdown3', 'value'), Input('dropdown4', 'value'))
-def render_graph_a(selected_year, selected_count, selected_city_count, selected_vendor):
-    fig = fig_graph_a(selected_year, selected_count, selected_city_count, selected_vendor)
+def render_graph_a(selected_year, selected_month, selected_city_count, selected_vendor):
+    fig = fig_graph_a(selected_year, selected_month, selected_city_count, selected_vendor)
     return fig
 
 

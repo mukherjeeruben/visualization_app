@@ -2,12 +2,12 @@ debug = True  # Push False on Server
 base_url='''https://data.cityofnewyork.us'''
 location_master_data = '''https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv'''
 
-line_graph_chunk = 10000000
+graph_chunk = 10000000
 
-query_year = [{'year': 2017, 'keyval': 'biws-g3hs'},
-              {'year': 2018, 'keyval': 't29m-gskq'},
+query_year = [{'year': 2020, 'keyval': 'kxp8-n2sj'},
               {'year': 2019, 'keyval': '2upf-qytp'},
-              {'year': 2020, 'keyval': 'kxp8-n2sj'}]
+              {'year': 2018, 'keyval': 't29m-gskq'},
+              {'year': 2017, 'keyval': 'biws-g3hs'}]
 
 
 chunk_set =[{'chunk': 'Less than 1000', 'keyval': 10000},

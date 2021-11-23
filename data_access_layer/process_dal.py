@@ -1,23 +1,25 @@
 import pandas as pd
-import calendar
 from data_access_layer.url_source_data import get_url_query_data, get_location_master_data, get_paytype_master_data, get_vendor_master_data
 import config
 import numpy as np
 from time_log import code_init, execution_end
 
 
-def get_taxi_data(year, chunk_count, city_count, selected_vendor):
+def get_payment_type_data(year, month, city_count, selected_vendor):
     code_init()
     try:
+        date_range = None
+        for range_val in config.date_rangeset:
+            if month == range_val['month']:
+                date_range = '\'' + str(year) + range_val['startdate'] + '\'' + ' and ' + '\'' + str(year) + range_val['enddate'] + '\''
         raw_data = get_url_query_data(base_url=config.base_url,
                                        year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
-                                       columns='tpep_pickup_datetime,pulocationid,payment_type,total_amount',
-                                       condition_set='total_amount>10&vendorid='+str(selected_vendor),
-                                       limit=[x['keyval'] for x in config.chunk_set if x['chunk'] == chunk_count][0])
+                                       columns='vendorid,tpep_pickup_datetime,pulocationid,payment_type',
+                                       condition_set='tpep_pickup_datetime between '+date_range+'&vendorid='+str(selected_vendor),
+                                       limit=config.graph_chunk)
 
         ##Type Casting
         raw_data['pulocationid']=raw_data['pulocationid'].astype(int)
-        raw_data['total_amount'] = raw_data['total_amount'].astype(float)
         raw_data['payment_type'] = raw_data['payment_type'].astype(int)
 
         ## Get Payment Type Data
@@ -62,10 +64,12 @@ def get_taxi_data(year, chunk_count, city_count, selected_vendor):
         ## Rename Column
         result_df.rename(columns={'payment_type': 'Total Rides'}, inplace=True)
         result_df.rename(columns={'SourceLocation': 'Pickup Location'}, inplace=True)
-        result_df.rename(columns={'PaymentTypeName': 'Payment Type'}, inplace=True)
+        result_df.rename(columns={'PaymentTypeName': 'Payment Mode Type'}, inplace=True)
+
+        sorted_df = result_df.sort_values(by=['Total Rides'], ascending=False)
 
         execution_end()
-        return result_df
+        return sorted_df
 
     except Exception as msf:
         print(str(msf))
@@ -82,7 +86,7 @@ def get_year_revenue_data(month, year):
                                        year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
                                        columns='vendorid,tpep_pickup_datetime',
                                        condition_set='tpep_pickup_datetime between '+ date_range,
-                                       limit=config.line_graph_chunk)
+                                       limit=config.graph_chunk)
 
 
         ##Type Casting and Cleanng
