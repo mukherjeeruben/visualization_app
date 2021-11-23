@@ -1,4 +1,5 @@
 import pandas as pd
+import calendar
 from data_access_layer.url_source_data import get_url_query_data, get_location_master_data, get_paytype_master_data, get_vendor_master_data
 import config
 import numpy as np
@@ -59,7 +60,7 @@ def get_taxi_data(year, chunk_count, city_count, selected_vendor):
             result_df = result_df[result_df['SourceLocation'].isin(toplocation_list)]
 
         ## Rename Column
-        result_df.rename(columns={'payment_type': 'Payment Type Count'}, inplace=True)
+        result_df.rename(columns={'payment_type': 'Total Rides'}, inplace=True)
         result_df.rename(columns={'SourceLocation': 'Pickup Location'}, inplace=True)
         result_df.rename(columns={'PaymentTypeName': 'Payment Type'}, inplace=True)
 
@@ -88,10 +89,12 @@ def get_year_revenue_data(month, year):
         raw_data['vendorid'] = pd.to_numeric(raw_data['vendorid'], errors='coerce').fillna(0).astype(np.int64)
         date_set = raw_data['tpep_pickup_datetime'].str.split('T', expand=True)
         raw_data = pd.merge(raw_data, date_set, left_index=True, right_index=True)
-        raw_data = raw_data.drop(['tpep_pickup_datetime', 1], axis=1)
+        # raw_data = raw_data.drop(['tpep_pickup_datetime'], axis=1)
         raw_data.rename(columns={0: 'Date'}, inplace=True)
         raw_data['Date'] = pd.to_datetime(raw_data['Date'], format='%Y-%m-%d')
         raw_data['Day'] = pd.DatetimeIndex(raw_data['Date']).day
+        raw_data[1] = raw_data['Date'].dt.day_name(locale='English')
+        raw_data.rename(columns={1: 'Dayname'}, inplace=True)
 
         ## Get Vendor Master Data
         vendor_masterdata = get_vendor_master_data()
@@ -103,9 +106,18 @@ def get_year_revenue_data(month, year):
 
 
         # Group by vendor name and date
-        result_df = merged_location_df.groupby(['vendorname', 'Day'], as_index=False).agg({'vendorid': 'sum'})
+        result_df = merged_location_df.groupby(['vendorname', 'Day', 'Dayname'], as_index=False).agg({'vendorid': 'sum'})
+
+        ##Format Columns and data
+        result_df['tpep_pickup_datetime'] = result_df['Dayname'].map(str) + '(' + result_df['Day'].map(str) + ')'
+        result_df.rename(columns={'tpep_pickup_datetime': 'WeekDay'}, inplace=True)
+        result_df.rename(columns={'vendorid': 'Ride Count'}, inplace=True)
+        result_df.rename(columns={'vendorname': 'Vendor Company'}, inplace=True)
+        result_df = result_df.convert_dtypes()
+        enddate_list = result_df.loc[result_df['Day'] == result_df['Day'].max()].values.tolist()
+
         execution_end()
-        return result_df
+        return result_df, enddate_list
 
     except Exception as msf:
         print(str(msf))

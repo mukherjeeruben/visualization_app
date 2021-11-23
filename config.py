@@ -49,3 +49,4 @@ date_rangeset = [{'month': 'January', 'startdate': '-01-01T00:00:00', 'enddate':
                  {'month': 'November', 'startdate': '-11-01T00:00:00', 'enddate': '-11-30T23:59:00'},
                  {'month': 'December', 'startdate': '-12-01T00:00:00', 'enddate': '-12-31T23:59:00'}]
 
+
