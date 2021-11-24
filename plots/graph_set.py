@@ -5,7 +5,7 @@ import config
 
 def fig_graph_a(year, month, selected_city_count, selected_vendor):
     if year is None:
-        fig = px.bar()
+        return empty_plot('Select Taxi Vendor, Top Locations, Month and Year for number of payment modes per vendor in a month')
     else:
         df = get_payment_type_data(year, month, selected_city_count, selected_vendor)
         fig = px.bar(df, x="Total Rides",
@@ -15,6 +15,7 @@ def fig_graph_a(year, month, selected_city_count, selected_vendor):
                          orientation='h',
                          barmode='stack',
                          height=int(20*int(selected_city_count)+200))
+        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
         fig.update_layout(
             yaxis=dict(
                 showgrid=False,
@@ -79,7 +80,7 @@ def fig_graph_a(year, month, selected_city_count, selected_vendor):
 
 def fig_graph_b(month, year):
     if year is None:
-        fig = px.line()
+        return empty_plot('Select Month and Year for number day rides per vendor of a month')
     else:
         df, enddate_list = get_year_revenue_data(month, year)
         fig = px.line(df, x="WeekDay", y="Ride Count", color='Vendor Company', markers=True, symbol="Vendor Company")
@@ -152,7 +153,7 @@ def fig_graph_b(month, year):
         # Title
         annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
                                 xanchor='left', yanchor='bottom',
-                                text='New York : Yellow Taxi ride data per day for ' +'('+str(month)+', '+str(year)+')',
+                                text='Ride data for taxi vendors per day for ' +'('+str(month)+', '+str(year)+')',
                                 font=dict(family='Arial',
                                           size=24,
                                           color='rgb(82, 82, 82)'),
@@ -175,7 +176,7 @@ def fig_graph_b(month, year):
 
 def fig_graph_c(year, month):
     if year is None:
-        fig = px.bar()
+        return empty_plot(message='Select Month and Year for fare division of Taxi Vendors')
     else:
         df = get_vendor_revenue_data(year, month)
         fig = px.bar(df,
@@ -258,3 +259,29 @@ def fig_graph_c(year, month):
         fig.update_layout(annotations=annotations)
 
     return fig
+
+
+def empty_plot(message):
+    template = {
+            "layout": {
+                "xaxis": {
+                    "visible": False
+                },
+                "yaxis": {
+                    "visible": False
+                },
+                "annotations": [
+                    {
+                        "text": message,
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {
+                            "size": 18
+                        }
+                    }
+                ]
+            }
+        }
+
+    return template
