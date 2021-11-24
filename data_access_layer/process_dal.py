@@ -127,17 +127,26 @@ def get_year_revenue_data(month, year):
         print(str(msf))
 
 
-def get_vendor_revenue_data(year, chunk_count):
+def get_vendor_revenue_data(year, month):
     try:
         code_init()
+        date_range = None
+        for range_val in config.date_rangeset:
+            if month == range_val['month']:
+                date_range = '\'' + str(year) + range_val['startdate'] + '\'' + ' and ' + '\'' + str(year) + range_val[
+                    'enddate'] + '\''
+
         raw_data = get_url_query_data(base_url=config.base_url,
-                                  year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
-                                  columns='vendorid,total_amount,tip_amount',
-                                  condition_set='total_amount>10', limit=[x['keyval'] for x in config.chunk_set if x['chunk'] == chunk_count][0])
+                                      year_key=[x['keyval'] for x in config.query_year if x['year'] == year][0],
+                                      columns='vendorid,tpep_pickup_datetime,fare_amount,extra,mta_tax,tip_amount,improvement_surcharge',
+                                      condition_set='tpep_pickup_datetime between '+date_range,
+                                      limit=config.graph_chunk)
 
         # type_casting
-        raw_data[['tip_amount', 'total_amount']] = raw_data[['tip_amount', 'total_amount']].astype(float)
-        raw_data['vendorid'] = raw_data['vendorid'].astype(int)
+        raw_data = raw_data.convert_dtypes()
+        raw_data[['fare_amount', 'extra','mta_tax', 'tip_amount', 'improvement_surcharge']] = raw_data[['fare_amount', 'extra','mta_tax', 'tip_amount', 'improvement_surcharge']].astype(float)
+        # raw_data['vendorid'] = raw_data['vendorid'].astype(int)
+        raw_data['vendorid'] = pd.to_numeric(raw_data['vendorid'], errors='coerce').fillna(0).astype(np.int64)
 
         # Get vendor data
         vendor_masterdata = get_vendor_master_data()
@@ -150,14 +159,24 @@ def get_vendor_revenue_data(year, chunk_count):
         merged_vendor_df = merged_vendor_df[merged_vendor_df['vendorname'] != '<NA>']
 
         ## Groupby vendorid
-        new_vendor_df = merged_vendor_df.groupby(['vendorname'], as_index=False).aggregate({'total_amount': 'sum', 'tip_amount': 'sum'})
+        new_vendor_df = merged_vendor_df.groupby(['vendorname'], as_index=False).aggregate(
+            {'fare_amount': 'sum', 'extra': 'sum', 'mta_tax': 'sum', 'tip_amount': 'sum', 'improvement_surcharge': 'sum'})
+
+        new_vendor_df['Total Revenue'] = new_vendor_df["fare_amount"] + new_vendor_df["extra"] + new_vendor_df["mta_tax"] + new_vendor_df["tip_amount"] + new_vendor_df["improvement_surcharge"]
+
+        ## Rename Columns
+        new_vendor_df.rename(columns={'vendorname': 'Vendor Name'}, inplace=True)
+        new_vendor_df.rename(columns={'fare_amount': 'Base Fare'}, inplace=True)
+        new_vendor_df.rename(columns={'extra': 'Extra Charge'}, inplace=True)
+        new_vendor_df.rename(columns={'mta_tax': 'MTA Tax'}, inplace=True)
+        new_vendor_df.rename(columns={'tip_amount': 'Tip'}, inplace=True)
+        new_vendor_df.rename(columns={'improvement_surcharge': 'Improvement Surcharge'}, inplace=True)
 
         execution_end()
         return new_vendor_df
 
     except Exception as msf:
         print(str(msf))
-
 
 
 

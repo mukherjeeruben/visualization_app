@@ -22,8 +22,8 @@ def render_graph_b(selected_month, selected_year):
 
 
 @dash_app.callback(Output('graph_c', component_property='figure'), Input('dropdown20', 'value'),Input('dropdown21', 'value'))
-def render_graph_b(selected_year, selected_count):
-    fig = fig_graph_c(selected_year, selected_count)
+def render_graph_b(selected_year, selected_month):
+    fig = fig_graph_c(selected_year, selected_month)
     return fig
 
 

@@ -1,13 +1,28 @@
-debug = True  # Push False on Server
+debug = False  # Push False on Server
 base_url='''https://data.cityofnewyork.us'''
 location_master_data = '''https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv'''
 
 graph_chunk = 10000000
 
+################### MASTER DATA ####################
+
 query_year = [{'year': 2020, 'keyval': 'kxp8-n2sj'},
               {'year': 2019, 'keyval': '2upf-qytp'},
               {'year': 2018, 'keyval': 't29m-gskq'},
               {'year': 2017, 'keyval': 'biws-g3hs'}]
+
+payment_mode = '''[{"payment_type" : 1, "PaymentTypeName": "Credit card"},
+                {"payment_type" : 2, "PaymentTypeName": "Cash"},
+                {"payment_type" : 3, "PaymentTypeName": "No charge"},
+                {"payment_type" : 4, "PaymentTypeName": "Dispute"},
+                {"payment_type" : 5, "PaymentTypeName": "Unknown"},
+                {"payment_type" : 6, "PaymentTypeName": "Voided trip"}] '''
+
+
+Vendors_dataset = [{"VendorID": 1, "VendorName": "Creative Mobile Technologies"},
+                    {"VendorID": 2, "VendorName": "VeriFone Inc"}]
+
+################### MASTER DATA ####################
 
 
 chunk_set =[{'chunk': 'Less than 1000', 'keyval': 10000},
@@ -19,12 +34,6 @@ chunk_set =[{'chunk': 'Less than 1000', 'keyval': 10000},
             {'chunk': 'Less than 5000000', 'keyval': 5000000},
             {'chunk': 'Maximum', 'keyval': 6525000}]
 
-payment_mode = '''[{"payment_type" : 1, "PaymentTypeName": "Credit card"},
-                {"payment_type" : 2, "PaymentTypeName": "Cash"},
-                {"payment_type" : 3, "PaymentTypeName": "No charge"},
-                {"payment_type" : 4, "PaymentTypeName": "Dispute"},
-                {"payment_type" : 5, "PaymentTypeName": "Unknown"},
-                {"payment_type" : 6, "PaymentTypeName": "Voided trip"}] '''
 
 
 city_count = [{'chunk': '10', 'keyval': 10},
@@ -33,8 +42,6 @@ city_count = [{'chunk': '10', 'keyval': 10},
             {'chunk': 'All', 'keyval': 'All'}]
 
 
-Vendors_dataset = [{"VendorID": 1, "VendorName": "Creative Mobile Technologies"},
-                    {"VendorID": 2, "VendorName": "VeriFone Inc"}]
 
 date_rangeset = [{'month': 'January', 'startdate': '-01-01T00:00:00', 'enddate': '-01-31T23:59:00'},
                  {'month': 'February', 'startdate': '-02-01T00:00:00', 'enddate': '-02-28T23:59:00'},

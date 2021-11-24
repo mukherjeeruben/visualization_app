@@ -57,7 +57,7 @@ def fig_graph_a(year, month, selected_city_count, selected_vendor):
         # Title
         annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
                                 xanchor='left', yanchor='bottom',
-                                text='Payment mode count of cab vendor : '+str([x['VendorName'] for x in config.Vendors_dataset][0]) +' ('+str(month)+', '+str(year)+')',
+                                text='Payment mode count of taxi vendor : '+str([x['VendorName'] for x in config.Vendors_dataset if x['VendorID'] == selected_vendor][0]) +' ('+str(month)+', '+str(year)+')',
                                 font=dict(family='Arial',
                                           size=24,
                                           color='rgb(82, 82, 82)'),
@@ -173,15 +173,88 @@ def fig_graph_b(month, year):
     return fig
 
 
-def fig_graph_c(year, chunk_count):
+def fig_graph_c(year, month):
     if year is None:
-        fig = px.scatter()
+        fig = px.bar()
     else:
-        df = get_vendor_revenue_data(year, chunk_count)
-        fig = px.scatter(df, x="total_amount", y="vendorname",
-                         size="tip_amount", color="vendorname", hover_name="tip_amount", log_x=True, size_max=60)
+        df = get_vendor_revenue_data(year, month)
+        fig = px.bar(df,
+                     y="Vendor Name",
+                     x=['Base Fare', 'Extra Charge', 'MTA Tax', 'Tip', 'Improvement Surcharge'],
+                     barmode='stack',
+                     # text='Total Revenue',
+                     height=300)
+
+        # fig.update_traces(texttemplate='$%{text:.2s}', textposition='outside')
+        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+        fig.update_layout(
+            yaxis=dict(
+                showgrid=False,
+                showline=False,
+                showticklabels=True,
+                domain=[0, 1],
+                titlefont=dict(
+                    family='Arial',
+                    size=12,
+                    color='rgb(82, 82, 82)',
+                ),
+                tickfont=dict(
+                    family='Arial',
+                    size=12,
+                    color='rgb(82, 82, 82)',
+                )
+            ),
+            xaxis=dict(
+                zeroline=False,
+                showline=False,
+                showticklabels=True,
+                showgrid=False,
+                title='Fare Division',
+                tickprefix="$",
+                titlefont=dict(
+                    family='Arial',
+                    size=12,
+                    color='rgb(82, 82, 82)',
+                ),
+                tickfont=dict(
+                    family='Arial',
+                    size=12,
+                    color='rgb(82, 82, 82)',
+                )
+            ),
+            legend=dict(x=1.038, y=1.038, font_size=12),
+            margin=dict(l=100, r=20, t=60, b=70),
+            paper_bgcolor='white',
+            plot_bgcolor='white',
+        )
+
+        fig.update_layout(legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            title=''
+        ))
+        annotations = []
+        # Title
+        annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
+                                xanchor='left', yanchor='bottom',
+                                text='Fare Division of Taxi Vendors for' + ' (' + str(month) + ', ' + str(year) + ')',
+                                font=dict(family='Arial',
+                                          size=24,
+                                          color='rgb(82, 82, 82)'),
+                                showarrow=False))
+
+        # Source
+        annotations.append(dict(xref='paper', yref='paper', x=0.5, y=-0.23,
+                                xanchor='center', yanchor='top',
+                                text='Source: NYC Taxi & Limousine Commission Storytelling with data',
+                                font=dict(family='Arial',
+                                          size=12,
+                                          color='rgb(150,150,150)'),
+                                showarrow=False))
+
+        fig.update_layout(annotations=annotations)
 
     return fig
-
-
-
