@@ -8,6 +8,8 @@ def fig_graph_a(year, month, selected_city_count, selected_vendor):
         return empty_plot('Select Taxi Vendor, Top Locations, Month and Year for number of payment modes per vendor in a month')
     else:
         df = get_payment_type_data(year, month, selected_city_count, selected_vendor)
+        if selected_city_count == 'All':
+            selected_city_count = 50
         fig = px.bar(df, x="Total Rides",
                          y="Pickup Location",
                          color="Payment Mode Type",
@@ -22,6 +24,7 @@ def fig_graph_a(year, month, selected_city_count, selected_vendor):
                 showline=False,
                 showticklabels=True,
                 domain=[0, 1],
+                categoryorder='total descending',
                 titlefont=dict(
                     family='Arial',
                     size=12,
