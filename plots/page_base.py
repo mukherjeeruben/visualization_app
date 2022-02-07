@@ -4,7 +4,7 @@ from plots.control_set import set_control_a, set_control_b, set_control_c
 
 def set_page_base():
     page_base = html.Div(children=[
-        html.H1(children='CA682 Data Management and Visualization Assignment',
+        html.H1(children='Visualization Application - Dash',
                 style={'color': '#189AB4',
                        'font-size': '30px',
                        'font-family': 'sans-serif',

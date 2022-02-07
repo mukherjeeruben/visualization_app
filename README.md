@@ -1,4 +1,4 @@
-# DCU MCM 2021-22 - CA682 Data Management and Visualization Assignment 
+# Visualization Dash App
 
 dash-flask base app for virtualization 
 
